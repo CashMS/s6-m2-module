@@ -21,7 +21,7 @@ const App = () => {
   const [posts, setPosts] = useState(dummyData);
   const [searchTerm, setSearchTerm] = useState('');
 
-  const likePost = postId => {
+  const likePost = (postId) => {
     /*
       This function serves the purpose of increasing the number of likes by one, of the post with a given id.
 
@@ -37,15 +37,22 @@ const App = () => {
         - otherwise just return the post object unchanged.
      */
 
-        setPosts(posts.map(post => {
-          if (post.id === postId) {
-            return { ...post, likes: post.likes + 1 };
-          } else {
-            return post;
-          }
-        }))
+        const likedPosts = JSON.parse(localStorage.getItem('likedPosts')) || {};
+
+        if (!likedPosts[postId]) {
+          setPosts(posts.map(post => {
+            if (post.id === postId) {
+              likedPosts[postId] = true;
+              localStorage.setItem('likedPosts', JSON.stringify(likedPosts));
+              return { ...post, likes: post.likes + 1 };
+            } else {
+              return post;
+            }
+          }))
+        }
   };
 
+  // for the search bar
   const filtered = () => {
     const normal = searchTerm.trim().toLowerCase();
     if (!normal) return posts;
